@@ -32,7 +32,7 @@ import './index.css';
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_iMKPoe97I",
   client_id: "3jk0r0mrt0d52d2f0oodrk5ks2",
-  redirect_uri: "https://staging.d340znry72ciit.amplifyapp.com/callback",
+  redirect_uri: "https://main.d2edpj14zktqpx.amplifyapp.com/callback",
   response_type: "code",
   scope: "email openid phone",
 };

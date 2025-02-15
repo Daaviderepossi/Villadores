@@ -528,6 +528,7 @@
 // username al posto della mail //
 //////////////////////////////////
 
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import Calendar from "react-calendar";
@@ -538,6 +539,7 @@ const App = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [votes, setVotes] = useState({});
   const [userVote, setUserVote] = useState(null);
+  const [userName, setUserName] = useState("Utente Anonimo");
 
   // Reindirizza automaticamente al login se l'utente non è autenticato
   useEffect(() => {
@@ -545,6 +547,18 @@ const App = () => {
       auth.signinRedirect(); // Reindirizza alla pagina di login di Cognito
     }
   }, [auth.isLoading, auth.isAuthenticated, auth]);
+
+  // Recupera il nome utente dall'oggetto autenticazione
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user) {
+      setUserName(
+        auth.user.profile.preferred_username || 
+        auth.user.profile.email || 
+        auth.user.profile.sub || 
+        "Utente sconosciuto"
+      );
+    }
+  }, [auth.isAuthenticated, auth.user]);
 
   // Funzione per gestire il click su una data
   const handleDateClick = (date) => {
@@ -555,16 +569,25 @@ const App = () => {
   const handleVote = (vote) => {
     if (selectedDate) {
       const dateKey = selectedDate.toDateString();
-      const username = auth.user?.username || auth.user?.email || "Utente Anonimo";
       setVotes((prevVotes) => ({
         ...prevVotes,
         [dateKey]: {
           ...prevVotes[dateKey],
-          [username]: vote, // Usa l'username come chiave
+          [userName]: vote, // Usa il nome utente come chiave
         },
       }));
       setUserVote(vote);
     }
+  };
+
+  // Funzione per il logout
+  const handleLogout = () => {
+    const clientId = "tuo-client-id"; // Sostituisci con il tuo Client ID Cognito
+    const logoutUri = "https://tuo-dominio.amplifyapp.com"; // Modifica con il tuo dominio
+    const cognitoDomain = "https://tuo-cognito-domain.auth.region.amazoncognito.com";
+
+    auth.removeUser(); // Cancella la sessione
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
   // Se l'utente non è autenticato, mostra un messaggio di caricamento
@@ -583,7 +606,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-green-500 text-white py-6 text-center text-4xl font-bold">
-        Benvenuti tossici!
+        Benvenuti, {userName}!
       </header>
 
       {/* Main Content */}
@@ -651,7 +674,7 @@ const App = () => {
       <div className="flex justify-center mt-6">
         <button
           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-          onClick={() => auth.removeUser()}
+          onClick={handleLogout}
         >
           Sign Out
         </button>
@@ -661,3 +684,7 @@ const App = () => {
 };
 
 export default App;
+
+
+
+

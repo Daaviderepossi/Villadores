@@ -542,9 +542,12 @@ const App = () => {
   // Reindirizza automaticamente al login se l'utente non è autenticato
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
-      auth.signOut();
       auth.signinRedirect(); // Reindirizza alla pagina di login di Cognito
     }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate("/login"); // Reindirizza alla pagina di login se non autenticato
+      }
   }, [auth.isLoading, auth.isAuthenticated, auth]);
 
   // Funzione per gestire il click su una data

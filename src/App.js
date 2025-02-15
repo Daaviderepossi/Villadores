@@ -843,7 +843,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-green-500 text-white py-6 text-center text-4xl font-bold">
-        Benvenuti, {userName}!
+        Benvenuti Tossici!!
       </header>
 
       <main className="container mx-auto p-4 flex">

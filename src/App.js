@@ -547,8 +547,8 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
         navigate("/login"); // Reindirizza alla pagina di login se non autenticato
-      }
-    }
+      };
+    };
   }, [auth.isLoading, auth.isAuthenticated, auth]);
 
   // Funzione per gestire il click su una data

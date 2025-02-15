@@ -535,37 +535,38 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 const App = () => {
-  const auth = useAuth(); // Usa il contesto di autenticazione
+  const auth = useAuth();
   const [selectedDate, setSelectedDate] = useState(null);
   const [votes, setVotes] = useState({});
   const [userVote, setUserVote] = useState(null);
   const [userName, setUserName] = useState("Utente Anonimo");
+  const [proposals, setProposals] = useState(["", "", ""]); // Massimo 3 proposte
+  const [events, setEvents] = useState([]); // Eventi del giorno
 
-  // Reindirizza automaticamente al login se l'utente non è autenticato
+  // Effettua il login se non autenticato
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
-      auth.signinRedirect(); // Reindirizza alla pagina di login di Cognito
+      auth.signinRedirect(); // Reindirizza al login
     }
   }, [auth.isLoading, auth.isAuthenticated, auth]);
 
-  // Recupera il nome utente dall'oggetto autenticazione
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
       setUserName(
-        auth.user.profile.preferred_username || 
-        auth.user.profile.email || 
-        auth.user.profile.sub || 
+        auth.user.profile.preferred_username ||
+        auth.user.profile.email ||
+        auth.user.profile.sub ||
         "Utente sconosciuto"
       );
     }
   }, [auth.isAuthenticated, auth.user]);
 
-  // Funzione per gestire il click su una data
+  // Gestione click su una data
   const handleDateClick = (date) => {
     setSelectedDate(date);
   };
 
-  // Funzione per gestire il voto
+  // Gestione del voto
   const handleVote = (vote) => {
     if (selectedDate) {
       const dateKey = selectedDate.toDateString();
@@ -573,24 +574,46 @@ const App = () => {
         ...prevVotes,
         [dateKey]: {
           ...prevVotes[dateKey],
-          [userName]: vote, // Usa il nome utente come chiave
+          [userName]: vote,
         },
       }));
       setUserVote(vote);
     }
   };
 
-  // Funzione per il logout
+  // Gestione proposta
+  const handleProposalChange = (index, value) => {
+    const updatedProposals = [...proposals];
+    updatedProposals[index] = value;
+    setProposals(updatedProposals);
+  };
+
+  const handleAddVoteToProposal = (index) => {
+    const proposalKey = `proposal-${index}`;
+    const currentVotes = votes[proposalKey] || [];
+    if (currentVotes.length < 3) {
+      const updatedVotes = [...currentVotes, userName];
+      setVotes({
+        ...votes,
+        [proposalKey]: updatedVotes,
+      });
+      if (updatedVotes.length >= 3) {
+        setEvents((prevEvents) => [...prevEvents, proposals[index]]);
+      }
+    }
+  };
+
+  // Funzione di logout
   const handleLogout = () => {
-    const clientId = "3jk0r0mrt0d52d2f0oodrk5ks2"; // Sostituisci con il tuo Client ID Cognito
-    const logoutUri = "https://main.d2edpj14zktqpx.amplifyapp.com/"; // Modifica con il tuo dominio
+    const clientId = "3jk0r0mrt0d52d2f0oodrk5ks2";
+    const logoutUri = "https://main.d2edpj14zktqpx.amplifyapp.com/";
     const cognitoDomain = "https://eu-north-1imkpoe97i.auth.eu-north-1.amazoncognito.com";
 
-    auth.removeUser(); // Cancella la sessione
+    auth.removeUser();
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
-  // Se l'utente non è autenticato, mostra un messaggio di caricamento
+  // Rendering durante il caricamento
   if (auth.isLoading || !auth.isAuthenticated) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 p-4">
@@ -601,7 +624,6 @@ const App = () => {
     );
   }
 
-  // Se l'utente è autenticato, mostra il contenuto principale
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -634,7 +656,7 @@ const App = () => {
           </div>
         </div>
 
-        {/* Barra Laterale (sempre visibile) */}
+        {/* Barra Laterale */}
         <div className="w-96 bg-white shadow-lg rounded-lg p-6 ml-6">
           <h2 className="text-xl font-bold mb-4">
             {selectedDate ? `Voti per il ${selectedDate.toDateString()}` : "Seleziona una data"}
@@ -643,39 +665,66 @@ const App = () => {
             <>
               <ul className="mb-4">
                 {votes[selectedDate.toDateString()] &&
-                  Object.entries(votes[selectedDate.toDateString()]).map(
-                    ([username, vote], index) => (
-                      <li key={index} className="mb-2">
-                        <strong>{username}</strong>: {vote}
-                      </li>
-                    )
-                  )}
+                  Object.entries(votes[selectedDate.toDateString()]).map(([username, vote], index) => (
+                    <li key={index} className="mb-2">
+                      <strong>{username}</strong>: {vote}
+                    </li>
+                  ))}
               </ul>
               <div className="mt-4">
-                <button
-                  onClick={() => handleVote("SI")}
-                  className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                >
+                <button onClick={() => handleVote("SI")} className="bg-green-500 text-white px-4 py-2 rounded mr-2">
                   SI
                 </button>
-                <button
-                  onClick={() => handleVote("NO")}
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                >
+                <button onClick={() => handleVote("NO")} className="bg-red-500 text-white px-4 py-2 rounded">
                   NO
                 </button>
               </div>
             </>
           )}
+
+          {/* Sezione Proposte */}
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold">Proposte</h3>
+            {proposals.map((proposal, index) => (
+              <div key={index} className="mt-4">
+                <input
+                  type="text"
+                  value={proposal}
+                  onChange={(e) => handleProposalChange(index, e.target.value)}
+                  className="border p-2 w-full mb-2"
+                  placeholder={`Proposta ${index + 1}`}
+                />
+                <button
+                  onClick={() => handleAddVoteToProposal(index)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Vota
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
 
-      {/* Bottone di Logout */}
+      {/* Eventi del giorno */}
+      <div className="container mx-auto p-4">
+        <h3 className="text-xl font-semibold">Eventi del Giorno</h3>
+        {events.length > 0 ? (
+          events.map((event, index) => (
+            <div key={index} className="mt-2 p-4 bg-gray-200 rounded-md">
+              <p>{event}</p>
+            </div>
+          ))
+        ) : (
+          <p>Nessun evento programmato per oggi.</p>
+        )}
+      </div>
+
+      {/* Logout */}
       <div className="flex justify-center mt-6">
         <button
           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
           onClick={handleLogout}
-          //onClick={() => auth.signoutRedirect()} // Usa signoutRedirect invece di removeUser
         >
           Sign Out
         </button>
@@ -685,6 +734,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 

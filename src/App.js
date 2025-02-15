@@ -582,9 +582,9 @@ const App = () => {
 
   // Funzione per il logout
   const handleLogout = () => {
-    const clientId = "tuo-client-id"; // Sostituisci con il tuo Client ID Cognito
-    const logoutUri = "https://tuo-dominio.amplifyapp.com"; // Modifica con il tuo dominio
-    const cognitoDomain = "https://tuo-cognito-domain.auth.region.amazoncognito.com";
+    const clientId = "3jk0r0mrt0d52d2f0oodrk5ks2"; // Sostituisci con il tuo Client ID Cognito
+    const logoutUri = "https://main.d2edpj14zktqpx.amplifyapp.com/"; // Modifica con il tuo dominio
+    const cognitoDomain = "https://eu-north-1imkpoe97i.auth.eu-north-1.amazoncognito.com";
 
     auth.removeUser(); // Cancella la sessione
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;

@@ -747,6 +747,11 @@ const App = () => {
   const [userVote, setUserVote] = useState(null);
   const [userName, setUserName] = useState("Utente Anonimo");
   const [proposals, setProposals] = useState([]); // Stato per le proposte
+  const [events, setEvents] = useState([
+    { title: "Evento 1", date: "2025-02-20" },
+    { title: "Evento 2", date: "2025-02-25" },
+    { title: "Evento 3", date: "2025-03-10" },
+  ]); // Stato per gli eventi
 
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
@@ -957,6 +962,18 @@ const App = () => {
           </div>
         </div>
       </main>
+
+      {/* Sezione degli eventi */}
+      <section className="container mx-auto p-6">
+        <h2 className="text-xl font-bold mb-4">Prossimi Eventi</h2>
+        <ul className="list-disc pl-6">
+          {events.map((event, index) => (
+            <li key={index} className="mb-2">
+              <strong>{event.title}</strong> - {event.date}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div className="flex justify-center mt-6">
         <button

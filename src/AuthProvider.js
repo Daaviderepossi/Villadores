@@ -17,9 +17,9 @@ import React, { useEffect } from "react";
 import { AuthProvider, useAuth } from "react-oidc-context";
 
 const oidcConfig = {
-  authority: "https://tuo-cognito-domain.auth.region.amazoncognito.com", // Modifica con il tuo dominio Cognito
-  client_id: "tuo-client-id", // Modifica con il tuo Client ID
-  redirect_uri: "https://tuo-dominio.amplifyapp.com", // Modifica con il tuo redirect URI
+  authority: "https://eu-north-1imkpoe97i.auth.eu-north-1.amazoncognito.com", // Modifica con il tuo dominio Cognito
+  client_id: "3jk0r0mrt0d52d2f0oodrk5ks2", // Modifica con il tuo Client ID
+  redirect_uri: "https://main.d2edpj14zktqpx.amplifyapp.com/callback", // Modifica con il tuo redirect URI
   response_type: "code",
   scope: "openid profile email",
   extraQueryParams: { prompt: "login" }, // Forza il login ogni volta

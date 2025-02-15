@@ -674,8 +674,8 @@ const App = () => {
       <div className="flex justify-center mt-6">
         <button
           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-          //onClick={handleLogout}
-          onClick={() => auth.signoutRedirect()} // Usa signoutRedirect invece di removeUser
+          onClick={handleLogout}
+          //onClick={() => auth.signoutRedirect()} // Usa signoutRedirect invece di removeUser
         >
           Sign Out
         </button>

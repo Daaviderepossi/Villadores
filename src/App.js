@@ -555,7 +555,6 @@ const App = () => {
   const handleVote = (vote) => {
     if (selectedDate) {
       const dateKey = selectedDate.toDateString();
-      ##const username = auth.user?.profile?.preferred_username || "Utente Anonimo"; // Usa l'username
       const username = auth.user?.username || auth.user?.email || "Utente Anonimo";
       setVotes((prevVotes) => ({
         ...prevVotes,

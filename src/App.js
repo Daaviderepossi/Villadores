@@ -742,6 +742,7 @@ import "react-calendar/dist/Calendar.css";
 import awsconfig from './aws-exports'; // Importazione automatica da AWS
 import { API } from 'aws-amplify'; // Importa il modulo API
 import { Amplify } from 'aws-amplify';
+require('dotenv').config({ path: './env.ini' });
 
 Amplify.configure(awsconfig);
 

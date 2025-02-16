@@ -789,6 +789,7 @@ const App = () => {
         },
       }));
       setUserVote(vote);
+      submitVote(selectedDate, vote);  // Chiama la funzione per inviare il voto
     }
   };
 
@@ -866,11 +867,6 @@ const App = () => {
   }
 };
 
-  const handleVote = (vote) => {
-  if (selectedDate) {
-    submitVote(selectedDate, vote);  // Chiama la funzione per inviare il voto
-  }
-};
   // FINE AGGIUNTA
   return (
     <div className="min-h-screen bg-gray-100">

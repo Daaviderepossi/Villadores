@@ -741,6 +741,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import awsconfig from './aws-exports'; // Importazione automatica da AWS
 import { API } from 'aws-amplify'; // Importa il modulo API
+import { Amplify } from 'aws-amplify';
 
 Amplify.configure(awsconfig);
 
@@ -800,6 +801,7 @@ const App = () => {
         ...prevProposals,
         { text: proposalText, creator: userName, votes: [] },
       ]);
+      setProposalText("");  // Reset l'input
     }
   };
 
@@ -835,17 +837,7 @@ const App = () => {
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
-  if (auth.isLoading || !auth.isAuthenticated) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 p-4">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 text-center">
-          <p className="text-lg font-semibold">Reindirizzamento al login...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // AGGIUNTO QUESTO
+    // AGGIUNTO QUESTO
   const submitVote = async (date, vote) => {
   const apiName = "myApi";  // Nome della tua API configurata in Amplify
   const path = "/vota";  // Il percorso della tua funzione nell'API Gateway
@@ -868,6 +860,18 @@ const App = () => {
 };
 
   // FINE AGGIUNTA
+  
+  if (auth.isLoading || !auth.isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 p-4">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 text-center">
+          <p className="text-lg font-semibold">Reindirizzamento al login...</p>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-green-500 text-white py-6 text-center text-4xl font-bold">
@@ -979,6 +983,7 @@ const App = () => {
                 placeholder="Inserisci una proposta"
                 className="border rounded p-2"
                 id="proposalText"
+                onChange={(e) => setProposalText(e.target.value)}
               />
               <button
                 onClick={() => handleAddProposal(document.getElementById("proposalText").value)}

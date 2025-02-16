@@ -739,6 +739,10 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import awsconfig from './aws-exports'; // Importazione automatica da AWS
+import { API } from 'aws-amplify'; // Importa il modulo API
+
+Amplify.configure(awsconfig);
 
 const App = () => {
   const auth = useAuth();
@@ -840,6 +844,34 @@ const App = () => {
     );
   }
 
+  // AGGIUNTO QUESTO
+  const submitVote = async (date, vote) => {
+  const apiName = "myApi";  // Nome della tua API configurata in Amplify
+  const path = "/vota";  // Il percorso della tua funzione nell'API Gateway
+  const myInit = {
+    body: {
+      date,
+      vote,
+    }, // I dati che invii nel corpo della richiesta
+    headers: {
+      "Content-Type": "application/json",  // Tipo di contenuto
+    },
+  };
+
+  try {
+    const response = await API.post(apiName, path, myInit); // Esegui una POST
+    console.log("Risposta dal server:", response);
+  } catch (error) {
+    console.error("Errore nella richiesta:", error);
+  }
+};
+
+  const handleVote = (vote) => {
+  if (selectedDate) {
+    submitVote(selectedDate, vote);  // Chiama la funzione per inviare il voto
+  }
+};
+  // FINE AGGIUNTA
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-green-500 text-white py-6 text-center text-4xl font-bold">
